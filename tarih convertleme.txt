@@ -1,0 +1,37 @@
+SET DATEFORMAT dmy;  
+
+alter FUNCTION fn_TarihRaporGosterimi
+(
+ -- tarih varchar olarak gelicek uzunluguna göre datetime olarak varchara dönüştürüyoruz
+	@text varchar(50)
+)
+RETURNS varchar(30)
+AS
+BEGIN
+
+return 
+
+case when CHARINDEX('M',upper(@text))>0 Then  ltrim(rtrim(convert(varchar(60),convert(date,@text),104)))+' 00:00:00'  Else 
+case when len(@text)=9 Then 
+
+case when CHARINDEX('.',@text)>0 Then
+'0'+ltrim(rtrim(@text))+' 00:00:00'
+Else
+ltrim(rtrim(substring(replace(@text,'/','.'),0,CHARINDEX('/',@text)+1)+'0'+substring(replace(@text,'/','.'),CHARINDEX('/',@text)+1,6)))+' 00:00:00'
+End
+
+Else
+case when len(@text)=10 Then replace(ltrim(rtrim(@text))+' 00:00:00','/','.')   Else
+case when len(@text)=18 Then '0'+ltrim(rtrim(@text)) Else
+case when len(@text)=12 Then replace(ltrim(rtrim(@text)),'/','.')+' 00:00:00' Else
+ltrim(rtrim(@text))
+End
+End
+End
+End
+End
+
+	
+
+END
+GO
